@@ -56,6 +56,7 @@ public:
   template <typename T>             void handle(const Scriptable<T>& );
   template <typename T>             void handle(const vector<T>&     c) { value = to_script(&c); }
   template <typename K, typename V> void handle(const map<K,V>&      c) { value = to_script(&c); }
+  template <typename K, typename V> void handle(const unordered_map<K,V>& c) { value = to_script(&c); }
   template <typename K, typename V> void handle(const IndexMap<K,V>& c) { value = to_script(&c); }
   template <typename K, typename V> void handle(const DelayedIndexMaps<K,V>&) {}
   template <typename K, typename V> void handle(const DelayedIndexMapsData<K,V>& c);
@@ -143,7 +144,7 @@ private:
 #define REFLECT_ENUM_GET_MEMBER(Enum) \
   template<> void GetDefaultMember::handle<Enum>(const Enum& enum_) { \
     EnumGetMember egm(*this); \
-    reflect_ ## Enum(const_cast<Enum&>(enum_), egm); \
+    ReflectEnum<Enum>::reflect(const_cast<Enum&>(enum_), egm); \
   }
 
 /// Handler to be used when reflecting enumerations for GetMember

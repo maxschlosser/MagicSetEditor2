@@ -542,6 +542,7 @@ String expand_keywords(const String& tagged_str, vector<KeywordMatch> const& mat
     // No match, so there is at least one character not part of a keyword
     // and possibly some tags before it that we missed
     skip_tags_for_keyword(true, true);
+    if (it == end) break;
     out += *it;
     ++it;
     ++untagged_pos;
@@ -773,7 +774,7 @@ void remove_from_stats(KeywordUsageStatistics* stat, const Value* stat_key) {
 
 String KeywordDatabase::expand(const String& text, KeywordExpandOptions const& options) const {
   assert(options.combine_script);
-  assert_tagged(text);
+  assert_tagged(text, false);
 
   // Clean up usage statistics
   remove_from_stats(options.stat, options.stat_key);
@@ -793,7 +794,7 @@ String KeywordDatabase::expand(const String& text, KeywordExpandOptions const& o
   
   // Expand
   String result = expand_keywords(tagged, matches, options);
-  assert_tagged(result);
+  assert_tagged(result, false);
   return result;
 }
 

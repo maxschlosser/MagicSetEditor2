@@ -94,7 +94,8 @@ public:
   /// Reads a intrusive_ptr from the input stream
   template <typename T> void handle(intrusive_ptr<T>&);
   /// Reads a map from the input stream
-  template <typename V> void handle(map<String,V>&);
+  template <typename V> void handle(map<String, V>&);
+  template <typename V> void handle(unordered_map<String, V>&);
   /// Reads an IndexMap from the input stream, reads only keys that already exist in the map
   template <typename K, typename V> void handle(IndexMap<K,V>&);
   template <typename K, typename V> void handle(DelayedIndexMaps<K,V>&);
@@ -239,6 +240,14 @@ void Reader::handle(map<String, V>& m) {
   }
 }
 
+template <typename V>
+void Reader::handle(unordered_map<String, V>& m) {
+  while (enterAnyBlock()) {
+    handle_greedy(m[key]);
+    exitBlock();
+  }
+}
+
 template <typename K, typename V>
 void Reader::handle(IndexMap<K,V>& m) {
   for (typename IndexMap<K,V>::iterator it = m.begin() ; it != m.end() ; ++it) {
@@ -263,12 +272,12 @@ void Reader::handle(IndexMap<K,V>& m) {
 #define REFLECT_ENUM_READER(Enum) \
   template<> void Reader::handle<Enum>(Enum& enum_) { \
     EnumReader reader(getValue()); \
-    reflect_ ## Enum(enum_, reader); \
+    ReflectEnum<Enum>::reflect(enum_, reader); \
     reader.warnIfNotDone(this); \
   } \
   void parse_enum(const String& value, Enum& out) { \
     EnumReader reader(value); \
-    reflect_ ## Enum(out, reader); \
+    ReflectEnum<Enum>::reflect(out, reader); \
     reader.errorIfNotDone(); \
   }
 

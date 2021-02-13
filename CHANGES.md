@@ -4,6 +4,22 @@ Magic Set Editor changelog, for the details see `git log`
 HEAD: new items added as changes are made
 ------------------------------------------------------------------------------
 
+Features:
+ * You can now check/uncheck all selected cards in the export window (#93)
+
+Template features:
+ * Localization of game/stylesheet/symbol_font names is now done in those templates, instead of via the program-wide locale file. (#100)
+
+------------------------------------------------------------------------------
+version 2.1.2, 2020-09-28
+------------------------------------------------------------------------------
+
+Bug fixes:
+ * Fixed: crash in expand_keywords when given empty tags (#90)
+ * Fixed: tab traversal in native look editors (style and set info tabs) (#98)
+ * Fixed: Mana Symbol Menu Items were not using names from locale (#84)
+ * Auto replaces that match "" are now disabled
+
 ------------------------------------------------------------------------------
 version 2.1.1, 2020-06-14
 ------------------------------------------------------------------------------

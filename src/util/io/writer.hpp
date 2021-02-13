@@ -57,6 +57,7 @@ public:
   template <typename T> void handle(const intrusive_ptr<T>&);
   /// Write a map to the output stream
   template <typename K, typename V> void handle(const map<K,V>&);
+  template <typename K, typename V> void handle(const unordered_map<K, V>&);
   /// Write an IndexMap to the output stream
   template <typename K, typename V> void handle(const IndexMap<K,V>&);
   template <typename K, typename V> void handle(const DelayedIndexMaps<K,V>&);
@@ -111,15 +112,22 @@ void Writer::handle(const intrusive_ptr<T>& pointer) {
 }
 
 template <typename K, typename V>
-void Writer::handle(const map<K,V>& m) {
-  for (typename map<K,V>::const_iterator it = m.begin() ; it != m.end() ; ++it) {
+void Writer::handle(const map<K, V>& m) {
+  for (auto it = m.begin(); it != m.end(); ++it) {
+    handle(it->first.c_str(), it->second);
+  }
+}
+
+template <typename K, typename V>
+void Writer::handle(const unordered_map<K, V>& m) {
+  for (auto it = m.begin(); it != m.end(); ++it) {
     handle(it->first.c_str(), it->second);
   }
 }
 
 template <typename K, typename V>
 void Writer::handle(const IndexMap<K,V>& m) {
-  for (typename IndexMap<K,V>::const_iterator it = m.begin() ; it != m.end() ; ++it) {
+  for (auto it = m.begin() ; it != m.end() ; ++it) {
     handle(get_key_name(*it).c_str(), *it);
   }
 }
@@ -142,7 +150,7 @@ void Writer::handle(const IndexMap<K,V>& m) {
 #define REFLECT_ENUM_WRITER(Enum) \
   template<> void Writer::handle<Enum>(const Enum& enum_) { \
     EnumWriter writer(*this); \
-    reflect_ ## Enum(const_cast<Enum&>(enum_), writer); \
+    ReflectEnum<Enum>::reflect(const_cast<Enum&>(enum_), writer); \
   }
 
 /// Handler to be used when reflecting enumerations for Writer
